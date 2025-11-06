@@ -1,0 +1,19 @@
+[package]
+name = "unidemo"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["staticlib", "cdylib", "lib"]
+
+[dependencies]
+bip39 = "2.1.0"
+derive_more = { version = "2.0.1", features = ["full"] }
+hex = "0.4.3"
+subxt = "0.44.0"
+subxt-signer = "0.44.0"
+thiserror = "2.0.17"
+uniffi = "0.30.0"
+
+[dev-dependencies]
+uniffi = { version = "0.30.0", features = ["bindgen-tests"] }
