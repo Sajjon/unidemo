@@ -1,3 +1,1 @@
-uniffi::build_foreign_language_testcases!(
-    "tests/bindings/key_tests.swift",
-);
+uniffi::build_foreign_language_testcases!("tests/bindings/key_tests.swift",);

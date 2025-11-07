@@ -49,8 +49,8 @@ impl KeyPair {
         Self::from_phrase(phrase, password)
     }
 
-    pub fn public_key(&self) -> PublicKey {
-        PublicKey::from(self.0.public_key())
+    pub fn public_key(&self) -> PublicKeyInner {
+        PublicKeyInner::from(self.0.public_key())
     }
 }
 
@@ -65,27 +65,73 @@ impl PartialEq for KeyPair {
     derive_more::Deref,
     derive_more::DerefMut,
     derive_more::From,
-    uniffi::Object,
     derive_more::Debug,
     derive_more::Display,
+    uniffi::Object,
 )]
 #[debug("0x{}", hex::encode(self.as_ref()))]
 #[display("0x{}", hex::encode(self.as_ref()))]
 #[uniffi::export(Eq, Debug, Display)]
-pub struct PublicKey(SubxtPublicKey);
+pub struct PublicKeyInner(SubxtPublicKey);
 
-impl Clone for PublicKey {
+use std::sync::Arc;
+
+#[derive(
+    Clone,
+    PartialEq,
+    Eq,
+    derive_more::Deref,
+    derive_more::From,
+    derive_more::Debug,
+    derive_more::Display,
+    uniffi::Record,
+)]
+#[uniffi::export(Eq, Debug, Display)]
+pub struct PublicKey {
+    inner: Arc<PublicKeyInner>,
+}
+
+impl Clone for PublicKeyInner {
     fn clone(&self) -> Self {
-        PublicKey::from(SubxtPublicKey(self.0.0.clone()))
+        PublicKeyInner::from(SubxtPublicKey(self.0.0.clone()))
     }
 }
 
-impl Eq for PublicKey {}
-impl PartialEq for PublicKey {
+impl Eq for PublicKeyInner {}
+impl PartialEq for PublicKeyInner {
     fn eq(&self, other: &Self) -> bool {
         self.0.as_ref() == other.0.as_ref()
     }
 }
+
+#[derive(uniffi::Record)]
+pub struct Person {
+    pub name: Name,
+    pub year_of_birth: u16,
+    pub website: Url,
+}
+
+#[derive(uniffi::Record)]
+pub struct Name {
+    pub first_name: String,
+    pub last_name: String,
+}
+
+use std::str::FromStr;
+pub use url::Url;
+
+uniffi::custom_type!(Url, String, {
+    remote,
+    try_lift: |s| Ok(Url::from_str(&s).unwrap()),
+    lower: |s| s.to_string(),
+});
+
+#[derive(uniffi::Record)]
+
+pub struct HolderOfData {
+    pub data: Vec<u8>,
+}
+
 
 uniffi::setup_scaffolding!();
 
