@@ -1,3 +1,5 @@
+mod non_empty_collection;
+
 use subxt_signer::sr25519::Keypair as SubxtKeyPair;
 use subxt_signer::sr25519::PublicKey as SubxtPublicKey;
 
@@ -14,10 +16,13 @@ use subxt_signer::sr25519::PublicKey as SubxtPublicKey;
 #[display("KeyPair({})", self.public_key())]
 pub struct KeyPair(SubxtKeyPair);
 
-#[derive(Clone, Copy, Debug, thiserror::Error, uniffi::Error)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error, uniffi::Error)]
 pub enum Error {
     #[error("Invalid mnemonic phrase")]
     InvalidMnemonic,
+
+    #[error("The collection is empty")]
+    EmptyCollection,
 }
 
 impl KeyPair {
@@ -131,7 +136,6 @@ uniffi::custom_type!(Url, String, {
 pub struct HolderOfData {
     pub data: Vec<u8>,
 }
-
 
 uniffi::setup_scaffolding!();
 
