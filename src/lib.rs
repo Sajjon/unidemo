@@ -1,5 +1,6 @@
 mod non_empty_collection;
 
+use serde::{Deserialize, Serialize};
 use subxt_signer::sr25519::Keypair as SubxtKeyPair;
 use subxt_signer::sr25519::PublicKey as SubxtPublicKey;
 
@@ -135,6 +136,34 @@ uniffi::custom_type!(Url, String, {
 
 pub struct HolderOfData {
     pub data: Vec<u8>,
+}
+
+#[uniffi::export(with_foreign)]
+#[async_trait::async_trait]
+pub trait NetworkingAntenna: Send + Sync + 'static {
+    async fn get_request(&self, url: Url) -> Result<Vec<u8>, Error>;
+}
+
+#[derive(uniffi::Object)]
+pub struct ApiClient {
+    network_antenna: Arc<dyn NetworkingAntenna>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TokenResponse {
+    #[serde(rename = "funded_txo_sum")]
+    amount: u64,
+}
+
+#[uniffi::export]
+impl ApiClient {
+    pub async fn get_dot_balance_by_address(&self, address: String) -> Result<u64, Error> {
+        // let url = Url::parse(&format!("https://api.example.com/dot_balance/{}", address))?;
+        // let response = self.network_antenna.get_request(url).await?;
+        // let token_response: TokenResponse = serde_json::from_slice(&response)?;
+        // Ok(token_response.amount)
+        todo!()
+    }
 }
 
 uniffi::setup_scaffolding!();

@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::Error;
 
 macro_rules! declare_non_empty_collection_of {
